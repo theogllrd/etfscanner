@@ -1,113 +1,183 @@
-import Image from 'next/image'
+'use client'
+
+import Image from 'next/image';
+import { useState } from 'react';
+
+
+
+/*const etfList = [
+  'CAC',
+  'NASDAQ'
+];*/
+
+
+
+
+/*function calculate(id: number, value: number) {
+  console.log('coucou here : ', etfList[id].compo[0].name)
+  return value * etfList[id].compo[0].pourcentage;
+}*/
+
+/*function Result({ etf, amount }) {
+  return <div>
+    {etf ? etf : 'default text'}
+    {amount ? amount : null}
+  </div>
+}*/
+
+function Result() {
+  console.log();
+  return <div>
+
+  </div>
+}
+
+//console.log(calculate(0, 500));
+
+
+function ResultsTable() {
+  return (<table className="border-collapse border border-slate-500 ...">
+    <thead>
+      <tr>
+        <th className="border border-slate-600 ...">State</th>
+        <th className="border border-slate-600 ...">City</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td className="border border-slate-700 ...">Indiana</td>
+        <td className="border border-slate-700 ...">Indianapolis</td>
+      </tr>
+      <tr>
+        <td className="border border-slate-700 ...">Ohio</td>
+        <td className="border border-slate-700 ...">Columbus</td>
+      </tr>
+      <tr>
+        <td className="border border-slate-700 ...">Michigan</td>
+        <td className="border border-slate-700 ...">Detroit</td>
+      </tr>
+    </tbody>
+  </table>);
+}
+
+
 
 export default function Home() {
+
+
+
+
+  /*const etfList = [
+    {
+      id: 1, name: 'SP500', compo: [
+        { name: 'Apple', pourcentage: 0.00378 },
+        { name: 'Microsoft', pourcentage: 0.00157 },
+      ]
+    },
+    { id: 2, name: 'NASDAQ' },
+    { id: 3, name: 'MSCI World' },
+  ];*/
+
+  const etfList = [
+    {
+      id: 1,
+      name: 'S&P 500',
+      composition: [{
+        compoName: 'Apple',
+        compoValue: 0.0661
+      }, {
+        compoName: 'Microsoft',
+        compoValue: 0.0558
+      }, {
+        compoName: 'Amazon',
+        compoValue: 0.0251
+      }, {
+        compoName: 'Nvidia',
+        compoValue: 0.0173
+      }, {
+        compoName: 'Tesla',
+        compoValue: 0.0166
+      }, {
+        compoName: 'Berkshire Hathaway',
+        compoValue: 0.0165
+      }, {
+        compoName: 'Alphabet',
+        compoValue: 0.0161
+      }, {
+        compoName: 'Exxon',
+        compoValue: 0.0136
+      }, {
+        compoName: 'Unitedhealth',
+        compoValue: 0.0133
+      }, {
+        compoName: 'Jpmorgan',
+        compoValue: 0.0126
+      }]
+    },
+    {
+      id: 2,
+      name: 'NASDAQ'
+    },
+    {
+      id: 3,
+      name: 'MSCI World',
+      composition: [{
+        compoName: 'microsoft',
+        compoValue: 1.234
+      }, {
+        compoName: 'Tesla',
+        compoValue: 4.58
+      }, {
+        compoName: 'Boug',
+        compoValue: 2.51
+      }]
+    },
+  ];
+
+
+  const [etf, setEtf] = useState(etfList[0]); // define the state variable and initialized it with the first value of the table
+  const [amount, setAmount] = useState(0); // define the state variable and initialized it with the first value of the table
+
+
+  const onChangeSelect = (e: any) => {
+    const selectedEtf = e.target.value;
+    const fullDataEtf = etfList.filter((e) => e.id == selectedEtf)[0];
+    setEtf(fullDataEtf);
+  }
+
+
+
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div>
+      <div className='w-full'>ETF Scanner</div>
+
+      <select id="etfs" onChange={e => onChangeSelect(e)} className="w-64 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        {etfList.map((etf) => <option value={etf.id} key={etf.id}>{etf.name}</option>)}
+      </select>
+
+      <input type="number" id="first_name" onChange={e => setAmount(e.target.value)} className="w-64 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Amount" required />
+
+
+
+
+      <div>
+        {etf ? etf.composition ? etf.composition.map((ze) => <p key={ze.compoName}>{ze.compoName} : {ze.compoValue * amount}€</p>) : null : null}
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div >
   )
 }
+
+/*  
+onChange={e => setEtf(e.target.value)}
+
+      <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Calculte</button>
+
+
+
+
+   
+      */
