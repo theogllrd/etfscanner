@@ -163,7 +163,7 @@ export default function Home() {
 
 
       <div>
-        {etf ? etf.composition ? etf.composition.map((ze) => <p key={ze.compoName}>{ze.compoName} : {ze.compoValue * amount}€</p>) : null : null}
+        {etf ? etf.composition ? etf.composition.map((ze) => <p key={ze.compoName}>{ze.compoName} : {ze.compoValue * parseInt(amount)}€</p>) : null : null}
       </div>
 
 
