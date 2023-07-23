@@ -136,7 +136,7 @@ export default function Home() {
 
 
   const [etf, setEtf] = useState(etfList[0]); // define the state variable and initialized it with the first value of the table
-  const [amount, setAmount] = useState(0); // define the state variable and initialized it with the first value of the table
+  const [amount, setAmount] = useState(''); // define the state variable and initialized it with the first value of the table
 
 
   const onChangeSelect = (e: any) => {
@@ -157,7 +157,7 @@ export default function Home() {
         {etfList.map((etf) => <option value={etf.id} key={etf.id}>{etf.name}</option>)}
       </select>
 
-      <input type="number" id="first_name" onChange={e => setAmount(e.target.value)} className="w-64 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Amount" required />
+      <input type="number" id="amount" onChange={e => setAmount(e.target.value)} className="w-64 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Amount" required />
 
 
 
