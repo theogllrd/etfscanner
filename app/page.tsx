@@ -35,7 +35,7 @@ function Result() {
 //console.log(calculate(0, 500));
 
 
-function ResultsTable({ etfs, totalAmount }) {
+function ResultsTable({ etfs, totalAmount }: any) {
   return (
     <div className="mt-2 flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
@@ -53,7 +53,7 @@ function ResultsTable({ etfs, totalAmount }) {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {etfs ?
                   etfs.composition ?
-                    etfs.composition.map((compo) =>
+                    etfs.composition.map((compo: any) =>
                       <tr key={compo.compoName} className="">
                         <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
                           {compo.compoName}</td>
