@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { Chart } from "react-google-charts";
+
 
 
 
@@ -25,17 +27,13 @@ import { useState } from 'react';
   </div>
 }*/
 
-function Result() {
-  console.log();
-  return <div>
 
-  </div>
-}
 
 //console.log(calculate(0, 500));
 
 
 function ResultsTable({ etfs, totalAmount }: any) {
+  console.log(etfs);
   return (
     <div className="mt-2 flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
@@ -70,6 +68,22 @@ function ResultsTable({ etfs, totalAmount }: any) {
         </div>
       </div>
     </div>
+  );
+}
+
+function ResultsChart({ etfs }: any) {
+  let etfTemp = [];
+  etfTemp.push(["Action", "Percentage"]);
+  etfs.composition.map((etf: any) => etfTemp.push([etf.compoName, etf.compoValue]));
+  console.log(etfTemp);
+
+  return (
+    <Chart
+      chartType="PieChart"
+      data={etfTemp}
+      width={"100%"}
+      height={"600px"}
+    />
   );
 }
 
@@ -164,13 +178,14 @@ export default function Home() {
 
   return (
     <div className='h-screen p-2'>
-      <div className="w-full text-xl text-center">ETF Scanner</div>
+      <div className="w-full text-2xl text-center">ETF Scanner</div>
 
       <div className="mt-2">
         <select
           id="etfs"
           onChange={e => onChangeSelect(e)}
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
           {etfList.map((etf) =>
             <option
               value={etf.id}
@@ -192,6 +207,8 @@ export default function Home() {
 
 
       <ResultsTable etfs={etf} totalAmount={amount} />
+
+      <ResultsChart etfs={etf} />
 
 
     </div >
