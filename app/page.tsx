@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Chart } from "react-google-charts";
 
 
@@ -33,7 +33,7 @@ import { Chart } from "react-google-charts";
 
 
 function ResultsTable({ etfs, totalAmount }: any) {
-  console.log(etfs);
+  //console.log(etfs);
   return (
     <div className="mt-2 flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
@@ -77,7 +77,7 @@ function ResultsChart({ etfs }: any) {
     let etfTemp = [];
     etfTemp.push(["Action", "Percentage"]);
     etfs.composition.map((etf: any) => etfTemp.push([etf.compoName, etf.compoValue]));
-    console.log(etfTemp);
+    //console.log(etfTemp);
 
     return (
       <Chart
@@ -182,6 +182,59 @@ export default function Home() {
 
 
 
+  /* Début de la decouverte */
+  const [isDisabled, setIsDisabled] = useState(false)
+  useEffect(() => {
+    if (inputList.length > 0) {
+      inputList[inputList.length - 1].input === ""
+        ? setIsDisabled(true)
+        : setIsDisabled(false)
+    }
+  })
+  const [inputList, setInputList] = useState([
+    {
+      input: "",
+      input_rank: null
+    }
+  ])
+  const handleListAdd = () => {
+    setInputList([
+      ...inputList,
+      {
+        input: "",
+        input_rank: null
+      }
+    ])
+  }
+  const handleInputChange = (event: any, index: any) => {
+    const { value } = event.target
+    const newInputList = [...inputList]
+    newInputList[index].input = value
+    newInputList[index].input_rank = index + 1
+    setInputList(newInputList)
+  }
+  const handleRemoveItem = (index: any) => {
+    const newList = [...inputList]
+    newList.splice(index, 1)
+    setInputList(newList)
+  }
+
+  console.log(inputList)
+  /* fin de la décougette*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div className='h-screen p-2'>
       <div className="w-full text-2xl text-center">ETF Scanner</div>
@@ -198,23 +251,89 @@ export default function Home() {
               key={etf.id}>{etf.name}
             </option>)}
         </select>
-      </div>
 
-      <div className="mt-2">
+
         <input
           type="number"
           id="amount"
           placeholder="Amount"
           onChange={e => setAmount(e.target.value)}
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="mt-2 w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         />
       </div>
 
 
 
-      {etf.composition ?
-        <ResultsTable etfs={etf} totalAmount={amount} /> :
-        <p className="pt-2">No data</p>
+
+
+
+
+
+
+
+      {inputList.length > 0
+        ? inputList.map((input, index) => (
+          <div key={index}
+            className="w-full flex mt-2">
+            <select
+              id="etfs"
+              onChange={e => onChangeSelect(e)}
+              className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              {etfList.map((etf) =>
+                <option
+                  value={etf.id}
+                  key={etf.id}>{etf.name}
+                </option>)}
+            </select>
+            <input
+              placeholder='Amount'
+              className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              onChange={(event: any) => handleInputChange(event, index)}
+              value={input.input}
+            />
+            <button className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              onClick={() => handleRemoveItem(index)}>
+
+              Delete
+
+            </button>
+          </div>
+        ))
+        : null}
+
+
+      {isDisabled ?
+        <button
+          className="cursor-not-allowed mt-2 w-full text-center bg-blue-300 text-white font-bold py-2 px-4 rounded"
+          onClick={handleListAdd}
+          disabled={isDisabled}>
+          Add new Portfolio
+        </button> :
+        <button
+          className="mt-2 w-full text-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleListAdd}
+          disabled={isDisabled}>
+          Add new Portfolio
+        </button>
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {
+        etf.composition ?
+          <ResultsTable etfs={etf} totalAmount={amount} /> :
+          <p className="pt-2">No data</p>
       }
 
       <ResultsChart etfs={etf} />
