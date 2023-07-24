@@ -72,19 +72,22 @@ function ResultsTable({ etfs, totalAmount }: any) {
 }
 
 function ResultsChart({ etfs }: any) {
-  let etfTemp = [];
-  etfTemp.push(["Action", "Percentage"]);
-  etfs.composition.map((etf: any) => etfTemp.push([etf.compoName, etf.compoValue]));
-  console.log(etfTemp);
 
-  return (
-    <Chart
-      chartType="PieChart"
-      data={etfTemp}
-      width={"100%"}
-      height={"600px"}
-    />
-  );
+  if (etfs.composition != null) {
+    let etfTemp = [];
+    etfTemp.push(["Action", "Percentage"]);
+    etfs.composition.map((etf: any) => etfTemp.push([etf.compoName, etf.compoValue]));
+    console.log(etfTemp);
+
+    return (
+      <Chart
+        chartType="PieChart"
+        data={etfTemp}
+        width={"100%"}
+        height={"600px"}
+      />
+    );
+  }
 }
 
 
@@ -139,6 +142,9 @@ export default function Home() {
       }, {
         compoName: 'Jpmorgan',
         compoValue: 0.0126
+      }, {
+        compoName: 'Autres',
+        compoValue: 0.747
       }]
     },
     {
@@ -206,7 +212,10 @@ export default function Home() {
 
 
 
-      <ResultsTable etfs={etf} totalAmount={amount} />
+      {etf.composition ?
+        <ResultsTable etfs={etf} totalAmount={amount} /> :
+        <p className="pt-2">No data</p>
+      }
 
       <ResultsChart etfs={etf} />
 
