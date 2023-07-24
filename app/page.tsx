@@ -54,7 +54,7 @@ function ResultsTable({ etfs, totalAmount }) {
                 {etfs ?
                   etfs.composition ?
                     etfs.composition.map((compo) =>
-                      <tr className="">
+                      <tr key={compo.compoName} className="">
                         <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
                           {compo.compoName}</td>
                         <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
