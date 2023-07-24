@@ -35,29 +35,42 @@ function Result() {
 //console.log(calculate(0, 500));
 
 
-function ResultsTable() {
-  return (<table className="border-collapse border border-slate-500 ...">
-    <thead>
-      <tr>
-        <th className="border border-slate-600 ...">State</th>
-        <th className="border border-slate-600 ...">City</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td className="border border-slate-700 ...">Indiana</td>
-        <td className="border border-slate-700 ...">Indianapolis</td>
-      </tr>
-      <tr>
-        <td className="border border-slate-700 ...">Ohio</td>
-        <td className="border border-slate-700 ...">Columbus</td>
-      </tr>
-      <tr>
-        <td className="border border-slate-700 ...">Michigan</td>
-        <td className="border border-slate-700 ...">Detroit</td>
-      </tr>
-    </tbody>
-  </table>);
+function ResultsTable({ etfs, totalAmount }) {
+  return (
+    <div className="mt-2 flex flex-col">
+      <div className="-m-1.5 overflow-x-auto">
+        <div className="p-1.5 min-w-full inline-block align-middle">
+          <div className="overflow-hidden">
+
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="">
+                <tr>
+                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
+                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {etfs ?
+                  etfs.composition ?
+                    etfs.composition.map((compo) =>
+                      <tr className="">
+                        <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {compo.compoName}</td>
+                        <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {(compo.compoValue * 100).toFixed(2)}%</td>
+                        <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {(compo.compoValue * totalAmount).toFixed(2)}€</td>
+                      </tr>) :
+                    null :
+                  null}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 
@@ -68,15 +81,15 @@ export default function Home() {
 
 
   /*const etfList = [
-    {
-      id: 1, name: 'SP500', compo: [
-        { name: 'Apple', pourcentage: 0.00378 },
-        { name: 'Microsoft', pourcentage: 0.00157 },
+      {
+        id: 1, name: 'SP500', compo: [
+      {name: 'Apple', pourcentage: 0.00378 },
+      {name: 'Microsoft', pourcentage: 0.00157 },
       ]
     },
-    { id: 2, name: 'NASDAQ' },
-    { id: 3, name: 'MSCI World' },
-  ];*/
+      {id: 2, name: 'NASDAQ' },
+      {id: 3, name: 'MSCI World' },
+      ];*/
 
   const etfList = [
     {
@@ -150,21 +163,35 @@ export default function Home() {
 
 
   return (
-    <div className='h-screen'>
-      <div className="w-full">ETF Scanner</div>
+    <div className='h-screen p-2'>
+      <div className="w-full text-xl text-center">ETF Scanner</div>
 
-      <select id="etfs" onChange={e => onChangeSelect(e)} className="w-64 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        {etfList.map((etf) => <option value={etf.id} key={etf.id}>{etf.name}</option>)}
-      </select>
-
-      <input type="number" id="amount" onChange={e => setAmount(e.target.value)} className="w-64 bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Amount" required />
-
-
-
-
-      <div>
-        {etf ? etf.composition ? etf.composition.map((ze) => <p key={ze.compoName}>{ze.compoName} : {ze.compoValue * parseInt(amount)}€</p>) : null : null}
+      <div className="mt-2">
+        <select
+          id="etfs"
+          onChange={e => onChangeSelect(e)}
+          className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          {etfList.map((etf) =>
+            <option
+              value={etf.id}
+              key={etf.id}>{etf.name}
+            </option>)}
+        </select>
       </div>
+
+      <div className="mt-2">
+        <input
+          type="number"
+          id="amount"
+          placeholder="Amount"
+          onChange={e => setAmount(e.target.value)}
+          className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        />
+      </div>
+
+
+
+      <ResultsTable etfs={etf} totalAmount={amount} />
 
 
     </div >
@@ -177,7 +204,36 @@ onChange={e => setEtf(e.target.value)}
       <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Calculte</button>
 
 
+      <div>
+        {etf ? etf.composition ? etf.composition.map((ze) => <p key={ze.compoName}>{ze.compoName} : {ze.compoValue * parseInt(amount)}€</p>) : null : null}
+      </div>
 
 
+
+
+
+      <div className="w-full">
+      <table className="w-full text-left">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Percentage</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {etfs ?
+            etfs.composition ?
+              etfs.composition.map((compo) =>
+                <tr>
+                  <td>{compo.compoName}</td>
+                  <td>{(compo.compoValue * 100).toFixed(2)}%</td>
+                  <td>{(compo.compoValue * totalAmount).toFixed(2)}€</td>
+                </tr>) :
+              null :
+            null}
+        </tbody>
+      </table>
+    </div>
    
       */
