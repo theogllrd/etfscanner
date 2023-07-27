@@ -270,7 +270,7 @@ export default function Home() {
 
     // je dois push chaque ligne dans un tableau
     //console.log('final table to display')
-    //console.log(finalTableToDisplay)
+
     setResultatParAction(finalTableToDisplay)
     //console.log(resultatParAction)
   }
