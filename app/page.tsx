@@ -18,17 +18,21 @@ function ResultsTable({ actions }: any) {
                 <tr>
                   <th scope="col" className="w-3/5 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                   <th scope="col" className="w-2/5 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount you own</th>
+                  <th scope="col" className="w-2/5 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {actions.map((action: any) =>
-                  parseInt(action[1]) != 0 ? <tr key={action[0]} className="">
-                    <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                      {action[0]}</td>
-                    <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                      {action[1].toFixed(2)} €</td>
-                  </tr> : null
-                )}
+                  action.amount != 0 ?
+                    <tr key={action.name} className="" >
+                      <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {action.name}</td>
+                      <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {(action.amount).toFixed(2)} €</td>
+                      <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {(action.percentage * 100).toFixed(2)} %</td>
+                    </tr>
+                    : null)}
               </tbody>
             </table>
           </div>
@@ -67,12 +71,51 @@ export default function Home() {
       name: 'S&P 500',
       composition: [{
         compoId: 1,
-        compoName: 'Apple',
-        compoValue: 0.60
+        compoName: 'APPLE INC.',
+        compoValue: 0.0762,
+        code: "NASDAQ: AAPL"
       }, {
         compoId: 2,
-        compoName: 'Microsoft',
-        compoValue: 0.40
+        compoName: 'MICROSOFT CORPORATION',
+        compoValue: 0.0677,
+        code: "NASDAQ: MSFT"
+      }, {
+        compoId: 3,
+        compoName: 'AMAZON.COM, INC.',
+        compoValue: 0.0310,
+        code: ""
+      }, {
+        compoId: 4,
+        compoName: 'NVIDIA CORPORATION',
+        compoValue: 0.0274
+      }, {
+        compoId: 5,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0192
+      }, {
+        compoId: 6,
+        compoName: 'TESLA, INC.',
+        compoValue: 0.0189
+      }, {
+        compoId: 7,
+        compoName: 'META PLATFORMS, INC.',
+        compoValue: 0.0169
+      }, {
+        compoId: 8,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0167
+      }, {
+        compoId: 9,
+        compoName: 'BERKSHIRE HATHAWAY INC.',
+        compoValue: 0.0163
+      }, {
+        compoId: 10,
+        compoName: 'UNITEDHEALTH GROUP INC.',
+        compoValue: 0.0121
+      }, {
+        compoId: 99,
+        compoName: 'OTHERS',
+        compoValue: 0.6976
       }]
     },
     {
@@ -80,11 +123,51 @@ export default function Home() {
       name: 'NASDAQ',
       composition: [{
         compoId: 1,
-        compoName: 'Apple',
-        compoValue: 0.55
+        compoName: 'APPLE INC.',
+        compoValue: 0.1210,
+        code: "NASDAQ: AAPL"
       }, {
-        compoName: 'Amazon',
-        compoValue: 0.45
+        compoId: 2,
+        compoName: 'MICROSOFT CORPORATION',
+        compoValue: 0.1188,
+        code: "NASDAQ: MSFT"
+      }, {
+        compoId: 3,
+        compoName: 'AMAZON.COM, INC.',
+        compoValue: 0.0617,
+        code: ""
+      }, {
+        compoId: 4,
+        compoName: 'NVIDIA CORPORATION',
+        compoValue: 0.0475
+      }, {
+        compoId: 6,
+        compoName: 'TESLA, INC.',
+        compoValue: 0.0417
+      }, {
+        compoId: 5,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0353
+      }, {
+        compoId: 8,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0352
+      }, {
+        compoId: 7,
+        compoName: 'META PLATFORMS, INC.',
+        compoValue: 0.0327
+      }, {
+        compoId: 11,
+        compoName: 'BROADCOM INC.',
+        compoValue: 0.02
+      }, {
+        compoId: 12,
+        compoName: 'PEPSICO, INC.',
+        compoValue: 0.0199
+      }, {
+        compoId: 99,
+        compoName: 'OTHERS',
+        compoValue: 0.4662
       }]
     },
   ];
@@ -112,7 +195,14 @@ export default function Home() {
   /* Début de la decouverte */
   const [isDisabled, setIsDisabled] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [resultatParAction, setResultatParAction] = useState([]);
+  const [resultatParAction, setResultatParAction] = useState([
+    {
+      name: "",
+      amount: 0,
+      percentage: 0,
+      code: ""
+    }
+  ]);
 
   useEffect(() => {
     if (inputList.length > 0) {
@@ -162,12 +252,19 @@ export default function Home() {
 
 
   const handleRemoveItem = (index: any) => {
-    const newList = [...inputList]
-    newList.splice(index, 1)
-    setInputList(newList)
-    console.log(inputList)
+    inputList.splice(index, 1)
     // ici refaire le calcul du totalAmount sinon il s'update pas au delete
-    //calculateActionDispatch();
+    calculateActionDispatch();
+
+    // La methode ci dessus est très très sale, mais je ne peux pas faire autrement
+    // La bonne méthode serait de faire
+    //const newList = [...inputList]
+    //newList.splice(index, 1)
+    //setInputList(newList)
+    // calculateActionDispatch();
+    // sauf que le changement de state est asynchrone et ma fonction calculate est appellé avant le changement de state
+    // donc quand je calcule je le fais toujours sur l'ancien state
+
   }
 
 
@@ -176,7 +273,7 @@ export default function Home() {
 
 
   const calculateActionDispatch = () => {
-    console.log("calculte after delete")
+
     // declare a variable to store the total amount of money for each etf
     let totalByEtf: any = [];
     let tempTotal = 0;
@@ -197,25 +294,69 @@ export default function Home() {
       tempTotal = 0;
     });
 
+
+
+    /*
+        // jusque ici tout va bien !!!!
+        totalByEtf.map((etf: any) => {
+          let idEtf = etf[0];
+          let value = etf[1];
+          const fullDataEtf = etfList.filter((e) => e.id == idEtf)[0];
+          fullDataEtf.composition.map((dataEtf) => {
+            resultatParAction.map((result: any) => {
+              if (result[0] == dataEtf.compoName) {
+                result[1] += dataEtf.compoValue * value;
+                console.log(resultatParAction)
+              }
+            })
+          })
+        })
+    
+    */
+
+    // je dois setResultatParAction
+
+
+
+
+
+
+
     let finalTableToDisplay: any = [];
     let shouldPush = true;
     // parcourir le tableau totalByEtf
     totalByEtf.map((element: any) => {
       let idEtf = element[0];
       let value = element[1];
+      // so far so good
       const fullDataEtf = etfList.filter((e) => e.id == idEtf)[0]; // je récupère la data de l'etf que je parcours
-      fullDataEtf.composition.map((r) => { // je parcours la composition de l'etf en question
+
+      fullDataEtf.composition.map((dataEtf) => { // je parcours la composition de l'etf en question
         // je dois comparer si l'id de mon r est déjà présent dans mon tableau finalTableToDisplay
         finalTableToDisplay.map((f: any) => {
-          if (f[0] == r.compoName) {
-            f[1] += r.compoValue * value;
+
+          if (f.name == dataEtf.compoName) {
+            f.amount += dataEtf.compoValue * value;
             shouldPush = false;
           }
         })
-        shouldPush ? finalTableToDisplay.push([r.compoName, r.compoValue * value]) : null;
+        shouldPush ? finalTableToDisplay.push({ name: dataEtf.compoName, amount: dataEtf.compoValue * value, code: dataEtf.code }) : null;
         shouldPush = true;
+
       })
     })
+    finalTableToDisplay.sort((a: any, b: any) => (a.amount < b.amount ? 1 : -1)) // tri le tableau par ordre croissant
+
+    let totalValueAmount = 0
+    finalTableToDisplay.map((fin: any) => {
+      totalValueAmount += fin.amount;
+    })
+
+    finalTableToDisplay.map((fin: any) => {
+      fin.percentage = fin.amount / totalValueAmount;
+    })
+
+
     setResultatParAction(finalTableToDisplay);
     //console.log(resultatParAction);
   }
@@ -256,10 +397,10 @@ export default function Home() {
               onChange={(event: any) => handleInputChange(event, index)}
               value={input.input}
             />
-            <button className="ml-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            {inputList.length > 1 ? <button className="ml-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
               onClick={() => handleRemoveItem(index)}>
               Delete
-            </button>
+            </button> : null}
 
           </div>
         ))
@@ -284,7 +425,7 @@ export default function Home() {
 
 
 
-      <ResultsTable actions={resultatParAction} />
+      {resultatParAction.length > 1 ? <ResultsTable actions={resultatParAction} /> : null}
 
 
 
