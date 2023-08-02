@@ -1,39 +1,12 @@
 'use client'
 
-import Image from 'next/image';
+import { stringify } from 'querystring';
 import { useEffect, useState } from 'react';
 import { Chart } from "react-google-charts";
 
 
 
-
-/*const etfList = [
-  'CAC',
-  'NASDAQ'
-];*/
-
-
-
-
-/*function calculate(id: number, value: number) {
-  console.log('coucou here : ', etfList[id].compo[0].name)
-  return value * etfList[id].compo[0].pourcentage;
-}*/
-
-/*function Result({ etf, amount }) {
-  return <div>
-    {etf ? etf : 'default text'}
-    {amount ? amount : null}
-  </div>
-}*/
-
-
-
-//console.log(calculate(0, 500));
-
-
-function ResultsTable({ etfs, totalAmount }: any) {
-  //console.log(etfs);
+function ResultsTable({ actions }: any) {
   return (
     <div className="mt-2 flex flex-col">
       <div className="-m-1.5 overflow-x-auto">
@@ -43,31 +16,29 @@ function ResultsTable({ etfs, totalAmount }: any) {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="">
                 <tr>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
-                  <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                  <th scope="col" className="w-3/5 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                  <th scope="col" className="w-2/5 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount you own</th>
+                  <th scope="col" className="w-2/5 px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {etfs ?
-                  etfs.composition ?
-                    etfs.composition.map((compo: any) =>
-                      <tr key={compo.compoName} className="">
-                        <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {compo.compoName}</td>
-                        <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {(compo.compoValue * 100).toFixed(2)}%</td>
-                        <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {(compo.compoValue * totalAmount).toFixed(2)}€</td>
-                      </tr>) :
-                    null :
-                  null}
+                {actions.map((action: any) =>
+                  action.amount != 0 ?
+                    <tr key={action.name} className="" >
+                      <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {action.name}</td>
+                      <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {(action.amount).toFixed(2)} €</td>
+                      <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                        {(action.percentage * 100).toFixed(2)} %</td>
+                    </tr>
+                    : null)}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
@@ -94,22 +65,57 @@ function ResultsChart({ etfs }: any) {
 
 export default function Home() {
 
-
-
-
-
   const etfList = [
     {
       id: 1,
       name: 'S&P 500',
       composition: [{
         compoId: 1,
-        compoName: 'Apple',
-        compoValue: 0.60
+        compoName: 'APPLE INC.',
+        compoValue: 0.0762,
+        code: "NASDAQ: AAPL"
       }, {
         compoId: 2,
-        compoName: 'Microsoft',
-        compoValue: 0.40
+        compoName: 'MICROSOFT CORPORATION',
+        compoValue: 0.0677,
+        code: "NASDAQ: MSFT"
+      }, {
+        compoId: 3,
+        compoName: 'AMAZON.COM, INC.',
+        compoValue: 0.0310,
+        code: ""
+      }, {
+        compoId: 4,
+        compoName: 'NVIDIA CORPORATION',
+        compoValue: 0.0274
+      }, {
+        compoId: 5,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0192
+      }, {
+        compoId: 6,
+        compoName: 'TESLA, INC.',
+        compoValue: 0.0189
+      }, {
+        compoId: 7,
+        compoName: 'META PLATFORMS, INC.',
+        compoValue: 0.0169
+      }, {
+        compoId: 8,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0167
+      }, {
+        compoId: 9,
+        compoName: 'BERKSHIRE HATHAWAY INC.',
+        compoValue: 0.0163
+      }, {
+        compoId: 10,
+        compoName: 'UNITEDHEALTH GROUP INC.',
+        compoValue: 0.0121
+      }, {
+        compoId: 99,
+        compoName: 'OTHERS',
+        compoValue: 0.6976
       }]
     },
     {
@@ -117,18 +123,60 @@ export default function Home() {
       name: 'NASDAQ',
       composition: [{
         compoId: 1,
-        compoName: 'Apple',
-        compoValue: 0.55
+        compoName: 'APPLE INC.',
+        compoValue: 0.1210,
+        code: "NASDAQ: AAPL"
       }, {
-        compoName: 'Amazon',
-        compoValue: 0.45
+        compoId: 2,
+        compoName: 'MICROSOFT CORPORATION',
+        compoValue: 0.1188,
+        code: "NASDAQ: MSFT"
+      }, {
+        compoId: 3,
+        compoName: 'AMAZON.COM, INC.',
+        compoValue: 0.0617,
+        code: ""
+      }, {
+        compoId: 4,
+        compoName: 'NVIDIA CORPORATION',
+        compoValue: 0.0475
+      }, {
+        compoId: 6,
+        compoName: 'TESLA, INC.',
+        compoValue: 0.0417
+      }, {
+        compoId: 5,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0353
+      }, {
+        compoId: 8,
+        compoName: 'ALPHABET INC.',
+        compoValue: 0.0352
+      }, {
+        compoId: 7,
+        compoName: 'META PLATFORMS, INC.',
+        compoValue: 0.0327
+      }, {
+        compoId: 11,
+        compoName: 'BROADCOM INC.',
+        compoValue: 0.02
+      }, {
+        compoId: 12,
+        compoName: 'PEPSICO, INC.',
+        compoValue: 0.0199
+      }, {
+        compoId: 99,
+        compoName: 'OTHERS',
+        compoValue: 0.4662
       }]
     },
   ];
 
 
+
+
   const [etf, setEtf] = useState(etfList[0]); // define the state variable and initialized it with the first value of the table
-  const [amount, setAmount] = useState(''); // define the state variable and initialized it with the first value of the table
+  //const [amount, setAmount] = useState('');
 
 
 
@@ -145,8 +193,17 @@ export default function Home() {
 
 
   /* Début de la decouverte */
-  const [isDisabled, setIsDisabled] = useState(false)
-  const [totalAmount, setTotalAmount] = useState(0)
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [resultatParAction, setResultatParAction] = useState([
+    {
+      name: "",
+      amount: 0,
+      percentage: 0,
+      code: ""
+    }
+  ]);
+
   useEffect(() => {
     if (inputList.length > 0) {
       inputList[inputList.length - 1].input === ""
@@ -174,105 +231,134 @@ export default function Home() {
       }
     ])
   }
+
+  // trigger everytime input or select value change
   const handleInputChange = (event: any, index: any) => {
-    /*const { value } = event.target
-    const newInputList = [...inputList]
-    newInputList[index].input = value
+    // get value and name of event
+    const value = event.target.value;
+    const name = event.target.name;
+    const newInputList = [...inputList];
+
+    // set the value according to the html element that trigerred the function
+    name === 'etfSelection' ? newInputList[index].etf = value : newInputList[index].input = value;
     newInputList[index].input_rank = index + 1
-    setInputList(newInputList)
-    let amount = 0;
-    inputList.map((input) => {
-      amount += parseInt(input.input);
-    })
-    setTotalAmount(amount)*/
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    const newInputList = [...inputList]
-    target.name === 'etfSelection' ? newInputList[index].etf = value : newInputList[index].input = value;
-    //newInputList[index].input = value
-    //newInputList[index].etf = value
-    newInputList[index].input_rank = index + 1
-    setInputList(newInputList)
-    //console.log(inputList);
-    resultatsAvecEtf();
+
+    // set the new input with their value in the state
+    setInputList(newInputList);
+
+    // we call the function to recalculate the action dispatch
+    calculateActionDispatch();
   }
+
 
   const handleRemoveItem = (index: any) => {
-    const newList = [...inputList]
-    newList.splice(index, 1)
-    setInputList(newList)
+    inputList.splice(index, 1)
     // ici refaire le calcul du totalAmount sinon il s'update pas au delete
+    calculateActionDispatch();
+
+    // La methode ci dessus est très très sale, mais je ne peux pas faire autrement
+    // La bonne méthode serait de faire
+    //const newList = [...inputList]
+    //newList.splice(index, 1)
+    //setInputList(newList)
+    // calculateActionDispatch();
+    // sauf que le changement de state est asynchrone et ma fonction calculate est appellé avant le changement de state
+    // donc quand je calcule je le fais toujours sur l'ancien state
+
   }
 
-  //console.log(inputList)
-  /* fin de la décougette*/
 
 
 
 
 
-  const [resultatParAction, setResultatParAction] = useState([]);
+  const calculateActionDispatch = () => {
 
-  const resultatsAvecEtf = () => {
-    let resu = [];
-    let temp = 0;
-    for (let i = 1; i <= etfList.length; i++) {
-      inputList.map((e) => {
-        parseInt(e.etf) == i ? temp += parseInt(e.input) : null;
+    // declare a variable to store the total amount of money for each etf
+    let totalByEtf: any = [];
+    let tempTotal = 0;
+
+    // go through all the etfList
+
+
+    // go through the etfList
+    etfList.map((etf) => {
+      // go through all the inputList
+      inputList.map((statedInput) => {
+        // if an etf in the state correspond to a etf in the etfList, we add data 
+        parseInt(statedInput.etf) == etf.id ? tempTotal += parseInt(statedInput.input) : null;
       })
-      resu.push([i, temp])
-      temp = 0
-    }
+      // push the data in an array
+      totalByEtf.push([etf.id, tempTotal]);
+      // reset the temp variable
+      tempTotal = 0;
+    });
 
-    resultatsParAction(resu)
-  }
 
 
-  const resultatsParAction = (resu: any) => {
-    //console.log('resu avec etf')
-    //console.log(resu)
-    let tempData: any = []
-    let finalTableToDisplay: any = []
-    let shouldPush = true
-    //let resuEtf = []
-    // parcourir le tableau resu
-    resu.map((element: any) => {
+    /*
+        // jusque ici tout va bien !!!!
+        totalByEtf.map((etf: any) => {
+          let idEtf = etf[0];
+          let value = etf[1];
+          const fullDataEtf = etfList.filter((e) => e.id == idEtf)[0];
+          fullDataEtf.composition.map((dataEtf) => {
+            resultatParAction.map((result: any) => {
+              if (result[0] == dataEtf.compoName) {
+                result[1] += dataEtf.compoValue * value;
+                console.log(resultatParAction)
+              }
+            })
+          })
+        })
+    
+    */
+
+    // je dois setResultatParAction
+
+
+
+
+
+
+
+    let finalTableToDisplay: any = [];
+    let shouldPush = true;
+    // parcourir le tableau totalByEtf
+    totalByEtf.map((element: any) => {
       let idEtf = element[0];
       let value = element[1];
+      // so far so good
       const fullDataEtf = etfList.filter((e) => e.id == idEtf)[0]; // je récupère la data de l'etf que je parcours
-      fullDataEtf.composition.map((r) => { // je parcours la composition de l'etf en question
+
+      fullDataEtf.composition.map((dataEtf) => { // je parcours la composition de l'etf en question
         // je dois comparer si l'id de mon r est déjà présent dans mon tableau finalTableToDisplay
-        /*finalTableToDisplay.map((f: any) => {
-          //console.log(f[0] + ' == ' + r.compoName)
-          f[0] == r.compoName ? f[1] += r.compoValue : null
-
-        })*/
-
         finalTableToDisplay.map((f: any) => {
-          if (f[0] == r.compoName) {
-            f[1] += r.compoValue * value
-            shouldPush = false
+
+          if (f.name == dataEtf.compoName) {
+            f.amount += dataEtf.compoValue * value;
+            shouldPush = false;
           }
-          //f[0] == r.compoName ? f[1] = r.compoValue * value && shouldPush = false : null
-
         })
-
-
-        shouldPush ? finalTableToDisplay.push([r.compoName, r.compoValue * value]) : null
-        shouldPush = true
+        shouldPush ? finalTableToDisplay.push({ name: dataEtf.compoName, amount: dataEtf.compoValue * value, code: dataEtf.code }) : null;
+        shouldPush = true;
 
       })
-
-      //resuEtf[index].push
     })
-    // pour chaque element dans resu, je prend son id et je le compare a un id dans etfList
+    finalTableToDisplay.sort((a: any, b: any) => (a.amount < b.amount ? 1 : -1)) // tri le tableau par ordre croissant
 
-    // je dois push chaque ligne dans un tableau
-    //console.log('final table to display')
-    //console.log(finalTableToDisplay)
-    setResultatParAction(finalTableToDisplay)
-    //console.log(resultatParAction)
+    let totalValueAmount = 0
+    finalTableToDisplay.map((fin: any) => {
+      totalValueAmount += fin.amount;
+    })
+
+    finalTableToDisplay.map((fin: any) => {
+      fin.percentage = fin.amount / totalValueAmount;
+    })
+
+
+    setResultatParAction(finalTableToDisplay);
+    //console.log(resultatParAction);
   }
 
 
@@ -285,38 +371,6 @@ export default function Home() {
     <div className='h-screen p-2'>
       <div className="w-full text-2xl text-center">ETF Scanner</div>
 
-      {/*<div className="mt-2">
-        <select
-          id="etfs"
-          onChange={e => onChangeSelect(e)}
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          {etfList.map((etf) =>
-            <option
-              value={etf.id}
-              key={etf.id}>{etf.name}
-            </option>)}
-        </select>
-
-
-        <input
-          type="number"
-          id="amount"
-          placeholder="Amount"
-          onChange={e => setAmount(e.target.value)}
-          className="mt-2 w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        />
-          </div>*/}
-
-
-
-
-
-
-
-
-
-
       {inputList.length > 0
         ? inputList.map((input, index) => (
           <div key={index}
@@ -325,7 +379,6 @@ export default function Home() {
             <select
               name="etfSelection"
               id="etfs"
-              //onChange={e => onChangeSelect(e)}
               onChange={(event: any) => handleInputChange(event, index)}
               className="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
@@ -341,14 +394,13 @@ export default function Home() {
               id="amount"
               placeholder='Amount'
               className="ml-2 w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              //onChange={(event: any) => handleInputChange(event, index)}
               onChange={(event: any) => handleInputChange(event, index)}
               value={input.input}
             />
-            <button className="ml-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            {inputList.length > 1 ? <button className="ml-2 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
               onClick={() => handleRemoveItem(index)}>
               Delete
-            </button>
+            </button> : null}
 
           </div>
         ))
@@ -373,8 +425,8 @@ export default function Home() {
 
 
 
+      {resultatParAction.length > 1 ? <ResultsTable actions={resultatParAction} /> : null}
 
-      {resultatParAction}
 
 
 
@@ -395,42 +447,4 @@ export default function Home() {
   )
 }
 
-/*  
-onChange={e => setEtf(e.target.value)}
-
-      <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Calculte</button>
-
-
-      <div>
-        {etf ? etf.composition ? etf.composition.map((ze) => <p key={ze.compoName}>{ze.compoName} : {ze.compoValue * parseInt(amount)}€</p>) : null : null}
-      </div>
-
-
-
-
-
-      <div className="w-full">
-      <table className="w-full text-left">
-        <thead>
-          <tr>
-            <th>Action</th>
-            <th>Percentage</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {etfs ?
-            etfs.composition ?
-              etfs.composition.map((compo) =>
-                <tr>
-                  <td>{compo.compoName}</td>
-                  <td>{(compo.compoValue * 100).toFixed(2)}%</td>
-                  <td>{(compo.compoValue * totalAmount).toFixed(2)}€</td>
-                </tr>) :
-              null :
-            null}
-        </tbody>
-      </table>
-    </div>
-   
-      */
+/* {/*<ResultsTable actions={resultatParAction} />*/
